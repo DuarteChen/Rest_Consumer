@@ -18,16 +18,16 @@ public class ClientREST {
 public static void main(String[] args) {
 	  
 	try {
-	      URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/add");
+	      URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/listarConsultas");
 	      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	      conn.setDoOutput(true);
 	      conn.setRequestMethod("POST");
 	      conn.setRequestProperty("Content-Type", "application/json");
 	      
 	
-		  String id = "12";
-		  String id2 = "2";
-		  String input = id + "," + id2;
+		  String id = "1";
+		  
+		  String input = id;
 
 	      OutputStream os = conn.getOutputStream();
 	      os.write(input.getBytes());
