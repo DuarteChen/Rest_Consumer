@@ -15,7 +15,7 @@ public class ClientREST {
         scanner.nextLine(); // Consume the newline character after nextInt()
 
         while (true) {
-            System.out.println("\n--- SOAP Client Menu ---");
+            System.out.println("\n--- REST Client Menu ---");
             System.out.println("1. Listar Consultas");
             System.out.println("2. Marcar consulta");
             System.out.println("3. Cancelar consulta");
@@ -114,6 +114,16 @@ public class ClientREST {
                     // Code for marking consultation
                     
                 case 3:
+                	
+                	chamarListarConsultas(clientID);
+                	
+                	System.out.println("Insira o número Consulta a cancelar: ");
+                    int idConsulta = scanner.nextInt();
+                	
+                	
+                    chamarRemoverConsulta(idConsulta);
+                	
+                	
                     // Code for canceling consultation
                     break;
                 case 4:
@@ -178,12 +188,63 @@ public class ClientREST {
             e.printStackTrace();
         }
     }
+    
+    
+    private static void chamarListarConsultas(int idClient) {
+    	try {
+            URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/listarConsultas");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            
+            String idClientString = "" + idClient;
+            String input = idClientString;
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            Scanner responseScanner = new Scanner(conn.getInputStream());
+            String response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+            System.out.println(response);
+            responseScanner.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 		
-		
-		
-		
-		
-		
+    private static void chamarRemoverConsulta(int idConsulta) {
+    	try {
+            URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/removerConsulta");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            
+            String idClientString = "" + idConsulta;
+            String input = idClientString;
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            Scanner responseScanner = new Scanner(conn.getInputStream());
+            String response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+            System.out.println(response);
+            responseScanner.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 		
     	
     }
