@@ -3,25 +3,215 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+
+
 
 // CXF REST Client Invoking POST Method
 public class ClientREST {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);  // Use a single scanner for the entire program
+    	
+    	
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("1. Login");
+        System.out.println("2. registar");
+        
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha após a entrada do número
+        String clientIDString = "0";
 
-        System.out.println("Insira o ID do cliente: ");
-        int clientID = scanner.nextInt(); // Read client ID
-        scanner.nextLine(); // Consume the newline character after nextInt()
+        if (choice == 1) {
+            // Lógica de login
+            while (clientIDString.equals("0")) {
+                System.out.println("Insira o user name: ");
+                String username = scanner.nextLine(); // Entrada do username
+                System.out.println("Insira a palavra passe: ");
+                String pass = scanner.nextLine(); // Entrada da senha
+                
+                try {
+                    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                    byte[] encodedHash = digest.digest(pass.getBytes());
+                    StringBuilder hexString = new StringBuilder();
+                    for (byte b : encodedHash) {
+                        String hex = Integer.toHexString(0xff & b);
+                        if (hex.length() == 1) {
+                            hexString.append('0');
+                        }
+                        hexString.append(hex);
+                    }
+                    pass = hexString.toString();
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException("Erro ao gerar hash da senha", e);
+                }
+                
+                String response = "0";
+                
+                try {
+                    URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/autenticar");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json");
 
-        while (true) {
+                    String input = "" + username.trim()+";"+pass.trim();
+
+                    OutputStream os = conn.getOutputStream();
+                    os.write(input.getBytes());
+                    os.flush();
+
+                    Scanner responseScanner = new Scanner(conn.getInputStream());
+                    response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+                    System.out.println(response);
+                    responseScanner.close();
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
+                
+                
+                clientIDString = response;
+                if (clientIDString.equals("0")) {
+                    System.out.println("Credenciais erradas. Tente novamente.");
+                }
+                
+                
+                
+            }
+            System.out.println("Login bem-sucedido! ID do cliente: " + clientIDString);
+        } else if (choice == 2) {
+            // Lógica de registo
+            String registado = "Usuário já existe!";
+            while (registado.equals("Usuário já existe!")) {
+                System.out.println("Insira o user name: ");
+                String username = scanner.nextLine(); // Entrada do username
+                System.out.println("Insira a palavra passe a definir: ");
+                String pass = scanner.nextLine(); // Entrada da senha
+
+                
+                String response = "Usuário já existe!";
+                
+                
+                
+                try {
+                    URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/registar");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json");
+
+                    String input = "" + username.trim()+";"+pass.trim();
+
+                    OutputStream os = conn.getOutputStream();
+                    os.write(input.getBytes());
+                    os.flush();
+
+                    Scanner responseScanner = new Scanner(conn.getInputStream());
+                    response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+                    System.out.println(response);
+                    responseScanner.close();
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
+                
+                registado = response;
+                if (registado.equals("Usuário já existe!")) {
+                    System.out.println("Erro: Usuário já existe! Tente novamente.");
+                }
+            }
+            System.out.println("Registo bem-sucedido! Por favor, faça login.");
+
+            // Lógica de login após registro
+            while (clientIDString.equals("0")) {
+                System.out.println("Insira o user name: ");
+                String username = scanner.nextLine(); // Entrada do username
+                System.out.println("Insira a palavra passe: ");
+                String pass = scanner.nextLine(); // Entrada da senha
+
+                
+                
+                
+                
+            	String response = "0";
+                
+                try {
+                    URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/autenticar");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json");
+
+                    String input = "" + username.trim()+";"+pass.trim();
+
+                    OutputStream os = conn.getOutputStream();
+                    os.write(input.getBytes());
+                    os.flush();
+
+                    Scanner responseScanner = new Scanner(conn.getInputStream());
+                    response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+                    System.out.println(response);
+                    responseScanner.close();
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                clientIDString = response;
+                if (clientIDString.equals("0")) {
+                    System.out.println("Credenciais erradas. Tente novamente.");
+                }
+            }
+            
+            
+            
+            
+            
+            
+            System.out.println("Login bem-sucedido! ID do cliente: " + clientIDString);
+        } else {
+            System.out.println("Opção inválida! Por favor, escolha 1 (Login) ou 2 (Registrar).");
+        }
+
+        
+        Integer clientID = 0;
+
+        try {
+            clientID = Integer.valueOf(clientIDString);  // Converts String to Integer
+            System.out.println("clientIdAsInteger: " + clientID);  // Prints the Integer object
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format: " + clientIDString);  // Catches invalid format cases
+        }
+
+        
+        
+      
+        
+        while (clientID != 0) {
             System.out.println("\n--- REST Client Menu ---");
             System.out.println("1. Listar Consultas");
             System.out.println("2. Marcar consulta");
             System.out.println("3. Cancelar consulta");
             System.out.println("4. Sair");
             System.out.print("Escolha uma opcao: ");
-            int choice = scanner.nextInt();  // Read menu choice
+            choice = scanner.nextInt();  // Read menu choice
             scanner.nextLine();  // Consume the newline character after nextInt()
             
             switch (choice) {
