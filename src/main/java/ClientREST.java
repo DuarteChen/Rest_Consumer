@@ -31,21 +31,7 @@ public class ClientREST {
                 System.out.println("Insira a palavra passe: ");
                 String pass = scanner.nextLine(); // Entrada da senha
                 
-                try {
-                    MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                    byte[] encodedHash = digest.digest(pass.getBytes());
-                    StringBuilder hexString = new StringBuilder();
-                    for (byte b : encodedHash) {
-                        String hex = Integer.toHexString(0xff & b);
-                        if (hex.length() == 1) {
-                            hexString.append('0');
-                        }
-                        hexString.append(hex);
-                    }
-                    pass = hexString.toString();
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException("Erro ao gerar hash da senha", e);
-                }
+                
                 
                 String response = "0";
                 
@@ -68,9 +54,11 @@ public class ClientREST {
                     responseScanner.close();
 
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    System.out.println("Erro de autenticação.");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    System.out.println("Erro de autenticação.");
                 }
                 
                 
@@ -117,9 +105,11 @@ public class ClientREST {
                     responseScanner.close();
 
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                	System.out.println("Erro a registar.");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.out.println("Erro a registar.");
                 }
                 
                 
@@ -162,9 +152,11 @@ public class ClientREST {
                     responseScanner.close();
 
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                	System.out.println("Erro de autenticação.");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.out.println("Erro de autenticação.");
                 }
                 
                 
@@ -195,9 +187,9 @@ public class ClientREST {
 
         try {
             clientID = Integer.valueOf(clientIDString);  // Converts String to Integer
-            System.out.println("clientIdAsInteger: " + clientID);  // Prints the Integer object
+            //System.out.println("clientIdAsInteger: " + clientID);  // Prints the Integer object
         } catch (NumberFormatException e) {
-            System.out.println("Invalid number format: " + clientIDString);  // Catches invalid format cases
+            //System.out.println("Invalid number format: " + clientIDString);  // Catches invalid format cases
         }
 
         
@@ -311,7 +303,7 @@ public class ClientREST {
                     int idConsulta = scanner.nextInt();
                 	
                 	
-                    chamarRemoverConsulta(idConsulta);
+                    chamarRemoverConsulta(idConsulta, clientID);
                 	
                 	
                     // Code for canceling consultation
@@ -408,7 +400,7 @@ public class ClientREST {
         }
     }
 		
-    private static void chamarRemoverConsulta(int idConsulta) {
+    private static void chamarRemoverConsulta(int idConsulta, int clientID) {
     	try {
             URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/removerConsulta");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -417,7 +409,7 @@ public class ClientREST {
             conn.setRequestProperty("Content-Type", "application/json");
 
             
-            String idClientString = "" + idConsulta;
+            String idClientString = idConsulta + ";" + clientID;
             String input = idClientString;
 
             OutputStream os = conn.getOutputStream();
