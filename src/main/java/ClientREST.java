@@ -50,7 +50,6 @@ public class ClientREST {
 
                     Scanner responseScanner = new Scanner(conn.getInputStream());
                     response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
-                    System.out.println(response);
                     responseScanner.close();
 
                 } catch (MalformedURLException e) {
@@ -74,15 +73,15 @@ public class ClientREST {
             System.out.println("Login bem-sucedido! ID do cliente: " + clientIDString);
         } else if (choice == 2) {
             // Lógica de registo
-            String registado = "Usuário já existe!";
-            while (registado.equals("Usuário já existe!")) {
+            String registado = "Utilizador já existe!";
+            while (registado.equals("Utilizador já existe!")) {
                 System.out.println("Insira o user name: ");
                 String username = scanner.nextLine(); // Entrada do username
                 System.out.println("Insira a palavra passe a definir: ");
                 String pass = scanner.nextLine(); // Entrada da senha
 
                 
-                String response = "Usuário já existe!";
+                String response = "Utilizador já existe!";
                 
                 
                 
@@ -114,8 +113,8 @@ public class ClientREST {
                 
                 
                 registado = response;
-                if (registado.equals("Usuário já existe!")) {
-                    System.out.println("Erro: Usuário já existe! Tente novamente.");
+                if (registado.equals("Utilizador já existe!")) {
+                    System.out.println("Erro: Utilizador já existe! Tente novamente.");
                 }
             }
             System.out.println("Registo bem-sucedido! Por favor, faça login.");
@@ -179,7 +178,7 @@ public class ClientREST {
             
             System.out.println("Login bem-sucedido! ID do cliente: " + clientIDString);
         } else {
-            System.out.println("Opção inválida! Por favor, escolha 1 (Login) ou 2 (Registrar).");
+            System.out.println("Opção inválida! Por favor, escolha 1 (Login) ou 2 (Registar).");
         }
 
         
@@ -197,7 +196,7 @@ public class ClientREST {
       
         
         while (clientID != 0) {
-            System.out.println("\n--- REST Client Menu ---");
+            System.out.println("\n--- Client REST Menu ---");
             System.out.println("1. Listar Consultas");
             System.out.println("2. Marcar consulta");
             System.out.println("3. Cancelar consulta");
