@@ -1,11 +1,15 @@
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+
+
 
 
 
@@ -36,6 +40,7 @@ public class ClientREST {
                 String response = "0";
                 
                 try {
+                
                     URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/autenticar");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setDoOutput(true);
@@ -200,7 +205,8 @@ public class ClientREST {
             System.out.println("1. Listar Consultas");
             System.out.println("2. Marcar consulta");
             System.out.println("3. Cancelar consulta");
-            System.out.println("4. Sair");
+            System.out.println("4. As nossas clínicas");
+            System.out.println("5. Sair");
             System.out.print("Escolha uma opcao: ");
             choice = scanner.nextInt();  // Read menu choice
             scanner.nextLine();  // Consume the newline character after nextInt()
@@ -307,7 +313,23 @@ public class ClientREST {
                 	
                     // Code for canceling consultation
                     break;
+                    
+                    
+                    
+                    
+                    
                 case 4:
+                	chamarListarClinicas();
+                	
+                	 System.out.println("Insira o ID da clínica: ");
+                     int clinicaID = scanner.nextInt();
+                     scanner.nextLine();
+                	
+                     chamarLocClinica(clinicaID);
+                    break;
+                    	
+
+                case 5:
                     System.out.println("Saindo...");
                     scanner.close();  // Close the scanner only when exiting the program
                     return;
@@ -426,6 +448,53 @@ public class ClientREST {
             e.printStackTrace();
         }
     }
+    
+    
+    private static void chamarLocClinica(int idClinica) {
+    	try {
+            URL url = new URL("http://localhost:8080/CD_FrontEnd_Rest/rest/locClinica");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            
+            String idClinicaString = idClinica + "";
+            String input = idClinicaString;
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            Scanner responseScanner = new Scanner(conn.getInputStream());
+            String response = responseScanner.useDelimiter("\\Z").next();  // Read entire response
+            
+            
+            String[] parts = response.split(";");
+            double latitude = Double.parseDouble(parts[0]);
+            double longitude = Double.parseDouble(parts[1]);
+            openGoogleMapsInBrowser(latitude, longitude);
+            
+            
+            responseScanner.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void openGoogleMapsInBrowser(double latitude, double longitude) {
+        try {
+            String googleMapsUrl = "https://www.google.com/maps?q=" + latitude + "," + longitude + "&hl=en";
+            URI uri = new URI(googleMapsUrl);
+            Desktop.getDesktop().browse(uri);  // Open the URL in the default browser
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+}
 		
     	
     }
